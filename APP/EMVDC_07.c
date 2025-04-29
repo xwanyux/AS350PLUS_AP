@@ -164,5 +164,6 @@ UCHAR result;
       for( i=0; i<buf2[0]; i++ )
 	 buf1[i+2] = buf2[i+1];
 	 
-      return( api_emv_CardholderVerification( 60, buf1, epb, ksn, g_iso_format, g_key_index ) );
+      return( api_emv_CardholderVerification( 60, buf1, epb, ksn ) );
+    //   return( api_emv_CardholderVerification( 60, buf1, epb, ksn, g_iso_format, g_key_index ) );
 }

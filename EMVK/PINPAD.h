@@ -25,9 +25,12 @@ extern  void	PP_show_incorrect_pin( void );
 extern  void	PP_show_last_pin_try( void );
 extern  void	PP_show_pin_ok( void );
 extern  void	PP_show_please_wait( void );
+extern	void	PP_show_enter_pin( UCHAR *amt );
+extern	void	PP_show_enter_pin_by_ext_pinpad( void );
 extern  UCHAR	PP_GetPIN( UINT tout, UCHAR *amt );
 extern  void	PP_GenPinBlock( UCHAR *pinblock );
-extern	UCHAR	PP_GenEncrypedPinBlock( UCHAR *pan, UCHAR *epb, UCHAR *ksn, UCHAR mod, UCHAR idx );
+extern	UCHAR	PP_GenEncrypedPinBlock( UCHAR *pan, UCHAR *epb, UCHAR *ksn );
+//extern	UCHAR	PP_GenEncrypedPinBlock( UCHAR *pan, UCHAR *epb, UCHAR *ksn, UCHAR mod, UCHAR idx );
 
 //----------------------------------------------------------------------------
 #endif

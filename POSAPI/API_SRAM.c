@@ -122,7 +122,7 @@ UCHAR args[sizeof(API_SRAM)+1];
 	
 	memmove(args,&pSram,sizeof(API_SRAM));
 	args[sizeof(API_SRAM)]=Pattern;
-	IPC_clientHandler(psDEV_SRAM,6,2,sizeof(API_SRAM),args,&retval);
+	IPC_clientHandler(psDEV_SRAM,6,2,sizeof(API_SRAM)+1,args,&retval);
 	return( retval );
 }
 

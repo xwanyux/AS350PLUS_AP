@@ -19,6 +19,8 @@
 //
 //----------------------------------------------------------------------------
 #include "POSAPI.h"
+#include "OS_PROCS.h"
+#include "IPC_client.h"
 #include "GDATA.h"
 #include "EMVAPI.h"
 #include "EMVAPK.h"
@@ -27,6 +29,7 @@
 //#include "EMVDCMSG.H"
 #include "API_EMVK.H"
 #include "EMVCB.H"
+#include "OS_FLASH.h"
 #include <string.h>
 
 extern	UCHAR	PED_PutWaveIEK( UCHAR *imek, UCHAR *iaek );
@@ -188,7 +191,7 @@ UCHAR	EMVK_CandidateList[MAX_CANDIDATE_NAME_CNT][CANDIDATE_NAME_LEN];
 //void	EMV_CB_ShowMsg_LAST_PIN_TRY( void )
 //{
 //}
-#ifndef PCI_AP
+// #ifndef PCI_AP
 // ---------------------------------------------------------------------------
 // FUNC  : Show "TRY AGAIN" message at 4'nd row. (FONT1, MIDWAY)
 // INPUT : none.
@@ -499,7 +502,7 @@ UCHAR result;
                  return( REF_Declined );
             }
 }
-#endif
+// #endif
 // ---------------------------------------------------------------------------
 // FUNC  : To get the special ICC data element by using GET_DATA command.
 // INPUT : tag1 - the 1'st byte of word tag (0 for single tag).
@@ -1078,8 +1081,8 @@ UCHAR selected_aid[SELECTED_AID_LEN];
 // RETURN: emvOK
 //         emvFailed   - device error.
 // ---------------------------------------------------------------------------
-//UCHAR api_emvk_InitEMVKernel( UCHAR *tid )
-UCHAR api_emvk_InitEMVKernel(void)
+UCHAR api_emvk_InitEMVKernel( UCHAR *tid )
+//UCHAR api_emvk_InitEMVKernel(void)
 {
 UINT  i;
 UCHAR buf[64];
@@ -1189,7 +1192,7 @@ UCHAR buf[64];
 //    buf[5] = '0';
 //    buf[6] = '0';
 //    buf[7] = '0';
-      //memmove( buf, tid, 8 );
+      memmove( buf, tid, 8 );
       api_emv_PutDataElement( DE_TERM, ADDR_TERM_TID, 8, buf );
 
       // --- Transaction Currency Code (n3) ---
@@ -2031,8 +2034,8 @@ UCHAR buf2[52];
 
       if( tout == 0 )
         tout = 60;
-      //return( api_emv_CardholderVerification( tout, buf1, epb, ksn ) );	// PATCH: 2010-03-12, typing error (buf2->buf1)
-      return api_emv_CardholderVerification(tout, buf1, epb, ksn, g_iso_format, g_key_index);
+      return( api_emv_CardholderVerification( tout, buf1, epb, ksn ) );	// PATCH: 2010-03-12, typing error (buf2->buf1)
+      //return api_emv_CardholderVerification(tout, buf1, epb, ksn, g_iso_format, g_key_index);
 }
 
 // ---------------------------------------------------------------------------
@@ -2046,7 +2049,7 @@ UCHAR buf2[52];
 // REF   : g_term_tx_amt
 // RETURN: none.
 // ---------------------------------------------------------------------------
-#ifndef PCI_AP
+// #ifndef PCI_AP
 void  api_emvk_TerminalRiskManagement( void )
 {
 UINT  i;
@@ -2069,7 +2072,7 @@ UCHAR log[TX_LOG_LEN];
 
       api_emv_TerminalRiskManagement( g_term_tx_amt, g_term_tx_amt, amt );
 }
-#endif
+// #endif
 // ---------------------------------------------------------------------------
 // FUNC  : once terminal risk management and application functions related
 //         to a normal offline transaction have been completed, the terminal
@@ -3117,15 +3120,28 @@ PutCapkExit:
 //         emvFailed
 //         emvOutOfService
 // ---------------------------------------------------------------------------
-#if 0
+// #if 0
 UCHAR	api_emvk_PutWaveIEK( UCHAR *imek, UCHAR *iaek )
 {
+#if 0
 	if( PED_PutWaveIEK( imek, iaek ) == apiOK )
 	  return( emvOK );
 	else
 	  return( emvFailed );
-}
+#else
+    UCHAR   retval;
+    UCHAR   iptlen = 1 + imek[0] + 1 + iaek[0];
+    UCHAR   sendbuff[iptlen];
+
+
+    memmove(sendbuff, imek, 1 + imek[0]);
+    memmove(sendbuff + 1 + imek[0], iaek, 1 + iaek[0]);
+    IPC_clientHandler(psDEV_SRAM, 7, 2, iptlen, sendbuff, &retval);
+
+    return retval;
 #endif
+}
+// #endif
 
 // ---------------------------------------------------------------------------
 // FUNC  : get IMEK & IAEK keys from SAM.
@@ -3148,15 +3164,26 @@ UCHAR	api_emvk_GetWaveIEK( void )
 // RETURN: emvOK
 //         emvFailed
 // ---------------------------------------------------------------------------
-#if 0
+// #if 0
 UCHAR	api_emvk_GetWaveIMEK( UCHAR *imek )
 {
+#if 0
 	if( PED_GetWaveIMEK( imek ) == apiOK )
 	  return( emvOK );
 	else
 	  return( emvFailed );
-}
+#else
+    UCHAR   retval;
+    UCHAR   sendbuff[1 + CL_IMEK_LEN];
+
+
+    IPC_clientHandler(psDEV_SRAM, 8, 0, 0, sendbuff, &retval);
+    memmove(imek, sendbuff, 1 + CL_IMEK_LEN);
+
+    return retval;
 #endif
+}
+// #endif
 
 // ---------------------------------------------------------------------------
 // FUNC  : get IMEK from SRAM.
@@ -3165,15 +3192,26 @@ UCHAR	api_emvk_GetWaveIMEK( UCHAR *imek )
 // RETURN: emvOK
 //         emvFailed
 // ---------------------------------------------------------------------------
-#if 0
+// #if 0
 UCHAR	api_emvk_GetWaveIAEK( UCHAR *iaek )
 {
+#if 0
 	if( PED_GetWaveIAEK( iaek ) == apiOK )
 	  return( emvOK );
 	else
 	  return( emvFailed );
-}
+#else
+    UCHAR   retval;
+    UCHAR   sendbuff[1 + CL_IAEK_LEN];
+
+
+    IPC_clientHandler(psDEV_SRAM, 9, 0, 0, sendbuff, &retval);
+    memmove(iaek, sendbuff, 1 + CL_IAEK_LEN);
+
+    return retval;
 #endif
+}
+// #endif
 
 // ---------------------------------------------------------------------------
 // FUNC  : get PIN type. (offline or online)
@@ -3220,7 +3258,7 @@ UCHAR	buf[16];
 // ---------------------------------------------------------------------------
 UCHAR	api_emvk_SetPinPadPort( UCHAR port )
 {
-//	return( api_ped_SetPinPadPort( port ) );	// 2016-10-11
-	return( emvOK );
+	return( api_ped_SetPinPadPort( port ) );	// 2016-10-11
+	// return( emvOK );
 }
 

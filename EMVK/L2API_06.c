@@ -317,7 +317,7 @@ UCHAR flag_SKIP = FALSE;	// for SB159
                            //	Cardholder Name Extended ('9F0B')
                            //	Issuer URL ('5F50')
                            //	Log Entry ('9F4D')
-                           //	Log Format ('9F4F')��
+                           //	Log Format ('9F4F')’
                            if( !((ptrtlv[0] == 0x5F) && (ptrtlv[1] == 0x20)) &&
                                !((ptrtlv[0] == 0x9F) && (ptrtlv[1] == 0x0B)) &&
                                !((ptrtlv[0] == 0x5F) && (ptrtlv[1] == 0x50)) &&
@@ -359,7 +359,7 @@ UCHAR flag_SKIP = FALSE;	// for SB159
                        else
                        {
                       	 if(ptrrec[0]==0x8e)
-			   continue;//09-jan-08 charles ,��cvm list�����׬�0�ɡA���i��������
+			   continue;//09-jan-08 charles ,當cvm list的長度為0時，不可直接結束
 			 else
 			   {
 			   // 2018-04-18, Issuer Public Key Remainder? (T=92 L=0)

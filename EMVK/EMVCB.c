@@ -114,12 +114,10 @@ UCHAR	EMV_CB_GetAmount( UCHAR *amt, UCHAR *sc )
 // RETURN  : 0xFF   - if aborted or time out.
 //         : others - item number of the selection. (0..n)
 // -------------------------------------------------------------------------------------------------
-#if 1
 UCHAR	EMV_CB_SelectApplication( UCHAR list_cnt, UCHAR *list )
 {
 	return( 255 );
 }
-#endif
 
 // -------------------------------------------------------------------------------------------------
 // FUNC  : (OPTIONAL) Show "TRY AGAIN" message in local language. (FONT1, MIDWAY)
@@ -128,11 +126,9 @@ UCHAR	EMV_CB_SelectApplication( UCHAR list_cnt, UCHAR *list )
 // RETURN: none.
 // NOTE  : This function is to be implemented from AP level.
 // -------------------------------------------------------------------------------------------------
-#if 1
 void	EMV_CB_ShowMsg_TRY_AGAIN( void )
 {
 }
-#endif
 
 // -------------------------------------------------------------------------------------------------
 // FUNC  : (OPTIONAL) Show "NOT ACCEPTED" message in local language. (FONT1, MIDWAY)
@@ -141,11 +137,9 @@ void	EMV_CB_ShowMsg_TRY_AGAIN( void )
 // RETURN: none.
 // NOTE  : This function is to be implemented from AP level.
 // -------------------------------------------------------------------------------------------------
-#if 1
 void	EMV_CB_ShowMsg_NOT_ACCEPTED( void )
 {
 }
-#endif
 
 // -------------------------------------------------------------------------------------------------
 // FUNC  : (OPTIONAL) Show "PLEASE WAIT" message in local language. (FONT1, MIDWAY)
@@ -167,11 +161,10 @@ void	EMV_CB_ShowMsg_PLEASE_WAIT( void )
 // RETURN: none.
 // NOTE  : This function is to be implemented from AP level.
 // -------------------------------------------------------------------------------------------------
-#if 1
 void	EMV_CB_ShowMsg_SELECT( void )
 {
 }
-#endif
+
 // -------------------------------------------------------------------------------------------------
 // FUNC  : (OPTIONAL) Show "INCORRECT PIN" message in local language at the first 3 rows. (FONT1)
 // INPUT : none.

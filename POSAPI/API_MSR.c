@@ -100,8 +100,7 @@ UCHAR track3Len;
 UCHAR args[256*3];//one track max length is 256
 	args[0]=dhn;
 	memmove(&args[1],sbuf,2);
-	memmove(&args[3],dbuf,3);
-	IPC_clientHandler(psDEV_MSR,4,3,3,args,&retval);
+	IPC_clientHandler(psDEV_MSR,4,2,3,args,&retval);
 	track1Len=args[3]+1;//length(1B)+sentinel(2B)+data(length-2 B)
 	track2Len=args[3+track1Len]+1;//length(1B)+sentinel(2B)+data(length-2 B)
 	track3Len=args[3+track1Len+track2Len]+1;//length(1B)+sentinel(2B)+data(length-2 B)

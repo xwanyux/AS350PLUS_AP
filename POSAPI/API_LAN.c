@@ -159,7 +159,7 @@ UCHAR sendbuff[3];
 	if(retval==apiReady)
 	{
 		memmove(dbuf,sendbuff+1,2);
-		LAN_RxreadyLength=(*dbuf)|((*dbuf+1)<<8);
+		LAN_RxreadyLength=(*dbuf)|(*(dbuf+1)<<8);
 	}
 	
 	return( retval );
@@ -273,6 +273,9 @@ UCHAR	api_lan_ping( UCHAR ip_len, UCHAR *ip, ULONG *time )
 {
 UCHAR retval;
 UCHAR buffer[ip_len+1+4];
+
+    buffer[0] = ip_len;
+    memmove(&buffer[1], ip, ip_len);
 	IPC_clientHandler(psDEV_LAN,13,2,ip_len+1,buffer,&retval);
     memmove(time,&buffer[ip_len+1],4);
 	return( retval );

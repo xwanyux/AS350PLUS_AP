@@ -24,6 +24,9 @@ SRC += 	$(wildcard ./EMVK/*.c)
 CFLAGS += -IPEDK/include
 SRC += 	$(wildcard ./PEDK/*.c)
 
+CFLAGS += -IPEDS_hnb/include
+SRC += 	$(wildcard ./PEDS_hnb/*.c)
+
 # CFLAGS += -IGzip/APP
 # CFLAGS += -IGzip/BSP_Include
 # SRC +=   $(wildcard ./Gzip/APP/*.c)

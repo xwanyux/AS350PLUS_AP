@@ -44,7 +44,7 @@ UCHAR retval;
 void	api_sys_reset( UCHAR target )
 {
 UCHAR retval;
-    IPC_clientHandler(psDEV_SYS,3,1,1,target,&retval);
+    IPC_clientHandler(psDEV_SYS,3,1,1,&target,&retval);
     return( retval );
 }
 

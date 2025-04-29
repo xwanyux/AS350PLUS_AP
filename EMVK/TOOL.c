@@ -2118,7 +2118,7 @@ UCHAR RESPONSE = TRUE;
 				  year = TL_bcd2Dec(2,bcd_year);
 				  
 				  RESPONSE = TL_CheckLeapYear( year );	// PATCH: 2009-01-31
-//				  if(year%4!=0)//���O�|�~
+//				  if(year%4!=0)//不是閏年
 //					  RESPONSE =( FALSE );
 
 			  }
@@ -2703,7 +2703,8 @@ API_AUX	pAux;
       pAux.Resend = 0;	// no retry
       g_dhn_aux = api_aux_open( COM1, pAux );	// 'COM2' is to be changed if necessary
       printf("g_dhn_aux=%d\n",g_dhn_aux);
-      if((g_dhn_aux == apiOutOfService) )
+    //   if((g_dhn_aux == apiOutOfService) )
+      if( (g_dhn_aux == apiOutOfLink) || (g_dhn_aux == apiOutOfService) )
         {
         api_aux_close(0);
         return( FALSE );

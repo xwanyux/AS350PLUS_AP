@@ -271,10 +271,9 @@ UINT  iFID;
 UCHAR index;
 
 
-//	goto EMVL2_TEST;	// 2009-10-23, non-PCI & page solution
+	goto EMVL2_TEST;	// 2009-10-23, non-PCI & page solution
 
 	// --- PCI PED ---
-#if	1
 	if( api_ped_SelectKey_CAPK( pki, rid, pkh, (UCHAR *)&index ) == apiOK )
 	  {
 	  pkm[0] = pkh[OFFSET_SAM_MOD_LEN+1]; // length of modulus
@@ -285,7 +284,7 @@ UCHAR index;
 	  }
 	else
 	  return( apiFailed );
-#endif
+
 
 EMVL2_TEST:
 
@@ -312,9 +311,9 @@ EMVL2_TEST:
       pkm[0] = r_apdu[OFFSET_SAM_MOD_LEN+1]; // length of modulus
       pkm[1] = r_apdu[OFFSET_SAM_MOD_LEN+0]; //
 
-//    if( r_apdu[OFFSET_SAM_EXP_LEN] == 1 )    
-//      memmove( &pkm[2], &r_apdu[OFFSET_SAM_MOD-2], pkm[0]+pkm[1]*256 );	// modulus
-//    else
+      if( r_apdu[OFFSET_SAM_EXP_LEN] == 1 )    
+        memmove( &pkm[2], &r_apdu[OFFSET_SAM_MOD-2], pkm[0]+pkm[1]*256 );	// modulus
+      else
         memmove( &pkm[2], &r_apdu[OFFSET_SAM_MOD], pkm[0]+pkm[1]*256 );		// modulus
         
       memmove( pke, &r_apdu[OFFSET_SAM_EXP], 3 );	// exponent

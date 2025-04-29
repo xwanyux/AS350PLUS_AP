@@ -226,7 +226,7 @@ UCHAR ret=1;
 //UCHAR	SIGNPAD_lcdtft_putstring( UCHAR dhn, UCHAR *sbuf, UCHAR *dbuf, UINT CCWdegrees )
 UCHAR  SIGNPAD_lcdtft_putstring( UCHAR dhn, API_LCDTFT_PARA para, UCHAR *dbuf, UINT CCWdegrees )
 {
-UCHAR strlen=*dbuf;
+UCHAR strlen=1+*dbuf;
 ULONG argulen=1+sizeof(API_LCDTFT_PARA)+strlen+2;
 UCHAR buffer[argulen];
 UCHAR ret=1;
@@ -261,4 +261,17 @@ UCHAR ret=1;
 	printf("client FontCodeLen=%ld  FontBmpLen=%ld\n",FontCodeLen,FontBmpLen);
   	IPC_clientHandler(psDEV_LCD,10,1,argulen,buffer,&ret);
 	return ret;
+}
+
+UCHAR api_lcdtft_fillRECT( UCHAR dhn, API_LCDTFT_RECT rect)
+{
+    UCHAR argulen = 1 + sizeof(API_LCDTFT_RECT);
+    UCHAR buffer[argulen];
+    UCHAR ret = 1;
+
+
+    buffer[0] = dhn;
+    memmove(&buffer[1], &rect, sizeof(API_LCDTFT_RECT));
+    IPC_clientHandler(psDEV_LCD, 11, 2, argulen, buffer, &ret);
+        return ret;
 }

@@ -131,7 +131,8 @@ extern  UCHAR api_emv_OfflineCDA( UCHAR phase, UCHAR *gac );
 extern  UCHAR api_emv_ProcessingRestrictions( void );
 
 //      L2API_09
-extern  UCHAR api_emv_CardholderVerification( UINT tout, UCHAR *msg, UCHAR *epb, UCHAR *ksn, UCHAR mod, UCHAR idx );
+extern  UCHAR api_emv_CardholderVerification( UINT tout, UCHAR *msg, UCHAR *epb, UCHAR *ksn );
+//extern  UCHAR api_emv_CardholderVerification( UINT tout, UCHAR *msg, UCHAR *epb, UCHAR *ksn, UCHAR mod, UCHAR idx );
 
 //      L2API_10
 extern  UCHAR api_emv_FloorLimitChecking( UCHAR *amt1, UCHAR *amt2 );
@@ -1161,8 +1162,8 @@ extern  UINT  api_emv_KernelCheckSum( void );
 //----------------------------------------------------------------------------
 #define ADDR_ICC_REC_START              ADDR_ICC_FILE_DE_END
 
-//#define MAX_ICC_REC_CNT                 80//EMV 42a 2009-03-03 Charles                         // PATCH: 2006-10-04, org = 30
-#define MAX_ICC_REC_CNT                 30
+#define MAX_ICC_REC_CNT                 80//EMV 42a 2009-03-03 Charles                         // PATCH: 2006-10-04, org = 30
+//#define MAX_ICC_REC_CNT                 30
 #define ICC_REC_LEN                     270
 
 #define ADDR_ICC_REC_01                 ADDR_ICC_REC_START+ICC_REC_LEN*0
@@ -1203,8 +1204,8 @@ extern  UINT  api_emv_KernelCheckSum( void );
 //----------------------------------------------------------------------------
 //      RSA SAM DATA STRUCTURE DEFINITIONS
 //----------------------------------------------------------------------------
-//#define MAX_KEY_SLOT_CNT        9                       // total number of key slots
-#define MAX_KEY_SLOT_NUM        18-1                      // max key slot number
+#define MAX_KEY_SLOT_CNT        9                       // total number of key slots
+#define MAX_KEY_SLOT_NUM        50                      // max key slot number
 #define MAX_SAM_BUF_LEN         248                     // max RSA SAM Tx/Rx buffer size
 
 #define KEY_FID_00              0x8000                  // file id for key 00 (WORKING)
@@ -1257,9 +1258,9 @@ extern  UINT  api_emv_KernelCheckSum( void );
 //
 //      Total: 300 bytes
 //----------------------------------------------------------------------------
-//#define RSA_SAM                         SAM6            // g_dhn_sam
-//
-#define MAX_CA_PK_CNT                   18-1
+#define RSA_SAM                         SAM6            // g_dhn_sam
+
+#define MAX_CA_PK_CNT                   50
 #define CA_PK_LEN                       300
 #define CA_PK_HEADER_LEN                29
 
@@ -1275,7 +1276,7 @@ extern  UINT  api_emv_KernelCheckSum( void );
 #define ADDR_CA_PK_AI                   ADDR_CA_HASH_AI_01+1
 #define ADDR_CA_PK_RFU                  ADDR_CA_PK_AI+1
 
-//#define ADDR_CA_PK_END                  ADDR_CA_PK_01+CA_PK_LEN*MAX_CA_PK_CNT
+#define ADDR_CA_PK_END                  ADDR_CA_PK_01+CA_PK_LEN*MAX_CA_PK_CNT
 
 //----------------------------------------------------------------------------
 //      Revocation List of the Issuer Public Key Certificate (signed by CAPK)
@@ -1283,14 +1284,44 @@ extern  UINT  api_emv_KernelCheckSum( void );
 //      FORMAT: RID[5] + CAPKI[1] + CERTIFICATE_SN[3]
 //      NOTE  : If RID = 00 00 00 00 00 -> end of list
 //----------------------------------------------------------------------------
-#define MAX_CAPK_REVOC_CNT              18-1
+#define MAX_CAPK_REVOC_CNT              50
 #define CAPK_REVOC_LEN                  9
 
-#define ADDR_CAPK_REVOCATION_LIST_01    ADDR_ICC_REC_END
+#define ADDR_CAPK_REVOCATION_LIST_01    ADDR_CA_PK_END
 #define ADDR_CAPK_REVOCATION_LIST_02    ADDR_CAPK_REVOCATION_LIST_01+CAPK_REVOC_LEN*1
 #define ADDR_CAPK_REVOCATION_LIST_50    ADDR_CAPK_REVOCATION_LIST_01+CAPK_REVOC_LEN*(MAX_CAPK_REVOC_CNT-1)
 
 #define ADDR_CAPK_REVOCATION_LIST_END   ADDR_CAPK_REVOCATION_LIST_01+CAPK_REVOC_LEN*MAX_CAPK_REVOC_CNT
+
+//----------------------------------------------------------------------------
+//      DUKPT-3DES
+//      Key Serial Number Register (10 bytes)
+//
+//      FORMAT: Initial Key Serial Number Register(59 bits) +
+//              Encryption Counter(21 bits)
+//----------------------------------------------------------------------------
+//#define KSN_REG_LEN                     10
+//
+//#define ADDR_KSN_REG                    ADDR_CAPK_REVOCATION_LIST_END
+//
+//#define ADDR_KSN_REG_END                ADDR_KSN_REG+KSN_REG_LEN
+
+//----------------------------------------------------------------------------
+//      DUKPT-3DES
+//      Future Key Register (21*17 bytes)
+//
+//      FORMAT: A set of 21 registers, numbered #1 to #21.
+//              Future PIN encrypiton key(16 bytes) + LRC(1 byte)
+//----------------------------------------------------------------------------
+//#define MAX_FUTURE_KEY_REG_CNT          21
+//#define FUTURE_KEY_LEN                  16
+//#define FUTURE_KEY_SLOT_LEN             17
+//
+//#define ADDR_FUTURE_KEY_REG             ADDR_KSN_REG_END
+//
+//#define ADDR_FUTURE_KEY_REG_END         ADDR_FUTURE_KEY_REG+FUTURE_KEY_SLOT_LEN*MAX_FUTURE_KEY_REG_CNT
+//
+//#define ADDR_DUKPT_KSN                  ADDR_FUTURE_KEY_REG_END // L-V[10]
 
 //****************************************************************************
 //      Data Element Addressing - WORKING BUFFER
@@ -1298,12 +1329,12 @@ extern  UINT  api_emv_KernelCheckSum( void );
 //                                Size    : 16KB
 //                                Range   : 0x0000 - 0x3FFF
 //****************************************************************************
-//#define ADDR_DIR_STACK                  0x0000          	// 8KB
-//#define ADDR_DIR_STACK_END              0x1FFF
+#define ADDR_DIR_STACK                  0x0000          	// 8KB
+#define ADDR_DIR_STACK_END              0x1FFF
 
-//#define PRINTER_QUE_LEN		  0x2000		// 8KB
-//#define ADDR_PRINTER_QUE                0x2000
-//#define ADDR_PRINTER_QUE_END            0x3FFF
+#define PRINTER_QUE_LEN                 0x2000		// 8KB
+#define ADDR_PRINTER_QUE                0x2000
+#define ADDR_PRINTER_QUE_END            0x3FFF
 
 //----------------------------------------------------------------------------
 #endif

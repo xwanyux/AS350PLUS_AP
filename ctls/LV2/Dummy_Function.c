@@ -49,13 +49,13 @@ UCHAR	api_usb_txstring( UCHAR dhn, UCHAR *sbuf ){return apiOK;}
 //ULONG	api_3des_decipher( UCHAR *pOut, UCHAR *pIn, UCHAR *pKey ){return apiOK;}
 //ULONG	api_aes_decipher( UCHAR *pOut, UCHAR *pIn, UCHAR *pKey, UCHAR KeySize ){return apiOK;}
 //ULONG	api_aes_encipher( UCHAR *pIn, UCHAR *pOut, UCHAR *pKey, UCHAR KeySize ){return apiOK;}
-#ifndef _build_DSS_
-UCHAR	api_dss2_apid( void ){return apiOK;}
-UCHAR	api_dss2_burn( ULONG apid ){return apiOK;}
-UCHAR	api_dss2_file( ULONG offset, ULONG length, UCHAR *data ){return apiOK;}
-UCHAR	api_dss2_init( UCHAR mode ){return apiOK;}
-UCHAR	api_dss2_run( UCHAR apid ){return apiOK;}
-#endif
+// #ifndef _build_DSS_
+// UCHAR	api_dss2_apid( void ){return apiOK;}
+// UCHAR	api_dss2_burn( ULONG apid ){return apiOK;}
+// UCHAR	api_dss2_file( ULONG offset, ULONG length, UCHAR *data ){return apiOK;}
+// UCHAR	api_dss2_init( UCHAR mode ){return apiOK;}
+// UCHAR	api_dss2_run( UCHAR apid ){return apiOK;}
+// #endif
 //UCHAR	api_emv_GetDataElement( UCHAR source, ULONG address, ULONG length, UCHAR *data ){return apiOK;}
 //void	api_emvk_IncTransSequenceCounter( void ){;}
 //ULONG	api_fls_read( UCHAR id, ULONG addr, ULONG len, UCHAR *buf ){return apiOK;}
@@ -74,11 +74,11 @@ UCHAR api_2DR_ReceiveData(UINT *optLen, UCHAR *optData){return apiOK;}
 UCHAR api_2DR_StopScan(void){return apiOK;}
 
 // Wayne modify
-UCHAR	apk_tsc_switch( UCHAR flag )
-{
-	api_tsc_close(0);
+// UCHAR	apk_tsc_switch( UCHAR flag )
+// {
+// 	api_tsc_close(0);
 
-	return apiOK;}
+// 	return apiOK;}
 
 //ULONG	OS_GET_KbdEventFlag( void ){return 0;}
 //void	OS_SET_KbdEventFlag( ULONG value ){;}
@@ -125,7 +125,7 @@ void OS_SET_SysTimerFreeCnt( ULONG value )
 }
 #endif
 
-#if	1
+#if	0
 ULONG OS_GET_MsrEventFlag( void )
 {
 	UCHAR msrStatus[4]={0};
@@ -140,7 +140,7 @@ ULONG OS_GET_MsrEventFlag( void )
 }
 #endif
 
-#if	1
+#if	0
 void OS_SET_MsrEventFlag( ULONG value )
 {
 	;

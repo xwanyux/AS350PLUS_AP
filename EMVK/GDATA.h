@@ -20,8 +20,10 @@
 //----------------------------------------------------------------------------
 #ifndef _GDATA_H_
 #define _GDATA_H_
-UCHAR   g_ibuf[300];
-UCHAR   g_obuf[300];
+// UCHAR   g_ibuf[300];
+UCHAR   g_ibuf[1500];			// 2009-03-07, expanded from 1000 to 1500 for 2CC.144.0x long HASH input data
+// UCHAR   g_obuf[300];
+UCHAR   g_obuf[1500];			// 2009-03-07, expanded from 1000 to 1500 for 2CC.144.0x long HASH input data
 UCHAR   g_temp[320];
 UCHAR	g_kernel = 0;			// KERNEL_EMV or KERNEL_PBOC	
 UCHAR	g_user_define;			// user defined message

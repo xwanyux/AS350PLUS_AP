@@ -24,6 +24,7 @@
 #include "POSAPI.h"
 #include "DEV_PED.h"
 #include "PEDAPI.h"
+#include "LCDTFTAPI.h"
 #include "OS_PROCS.h"
 #include "IPC_client.h"
 // #include "MPU.h"
@@ -88,7 +89,7 @@ UCHAR	result;
 	return( result );
 #else
     UCHAR   retval;
-    UCHAR   args;
+    UCHAR   *args;
 
 
 	IPC_clientHandler(psDEV_PED, 1, 0, 0, args, &retval);
@@ -532,12 +533,12 @@ UCHAR	result;
 // ---------------------------------------------------------------------------
 // FUNCTION: To generate encrypted PIN block by using AES DUKPT algorithm.
 // INPUT   : mode   - algorithm of PIN block.
-//		              bit0~7:
+//		              bit1~4:
 //		      	      0: ISO 9564 Format 0 (ANSI X9.8)
 //		      	      1: ISO 9564 Format 1
 //		      	      2: ISO 9564 Format 2 (NA)
 //		      	      3: ISO 9564 Format 3
-//		              bit8~15:
+//		              bit5~8:
 //			          0: _2TDEA_
 //			          1: _3TDEA_
 //			          2: _AES128_
@@ -550,7 +551,8 @@ UCHAR	result;
 //           apiFailed
 //           apiDeviceError
 // ---------------------------------------------------------------------------
-UCHAR	api_ped_GenPinBlock_AES_DUKPT( UINT mode, UCHAR *pan, UCHAR *epb, UCHAR *ksn )
+UCHAR	api_ped_GenPinBlock_AES_DUKPT( UCHAR mode, UCHAR *pan, UCHAR *epb, UCHAR *ksn )
+//UCHAR	api_ped_GenPinBlock_AES_DUKPT( UINT mode, UCHAR *pan, UCHAR *epb, UCHAR *ksn )
 {
 #if 0
 UCHAR	result;
@@ -565,14 +567,21 @@ UCHAR	result;
 	return( result );
 #else
     UCHAR   retval;
-    UCHAR   args[2 + 32 + 16 + 12];
+    // UCHAR   args[2 + 32 + 16 + 12];
+    UCHAR   args[1 + 32 + 16 + 12];
     
     
-    memmove(args, &mode, 2);
-    memmove(&args[2], pan, 32);
-    IPC_clientHandler(psDEV_PED, 10, 4, 34, args, &retval);
-    memmove(epb, &args[34], 16);
-    memmove(ksn, &args[50], 12);
+    // memmove(args, &mode, 2);
+    // memmove(&args[2], pan, 32);
+    // IPC_clientHandler(psDEV_PED, 10, 4, 34, args, &retval);
+    // memmove(epb, &args[34], 16);
+    // memmove(ksn, &args[50], 12);
+
+    args[0] = mode;
+    memmove(&args[1], pan, 32);
+    IPC_clientHandler(psDEV_PED, 10, 4, 33, args, &retval);
+    memmove(epb, &args[33], 16);
+    memmove(ksn, &args[49], 12);
 
     return retval;
 #endif
@@ -612,6 +621,76 @@ UCHAR	result;
     IPC_clientHandler(psDEV_PED, 5, 4, 34, args, &retval);
     memmove(epb, &args[34], 16);
 
+    return retval;
+#endif
+}
+
+// -------------------------------------------------------------------------------------------------
+// FUNC  : Setup parameters for AS350 internal PIN entry function.
+// INPUT : row	   - row number of display for PIN entry.
+//	       col	   - beginning column number of display for PIN entry.
+//	       palette - fixed 3 bytes palette values of RGB.
+// OUTPUT: none.
+// RETURN: none.
+// NOTE  : This function is to be implemented from AP level.
+// -------------------------------------------------------------------------------------------------
+void	api_ped_SetupPinPad( UCHAR *sbuf )
+{
+#if 0
+	memmove( &os_ped_EMVSignPadPara, sbuf, sizeof(API_LCDTFT_PARA) );
+#else
+    UCHAR   retval;
+    UCHAR   args[sizeof(API_LCDTFT_PARA)];
+
+
+    memmove(args, sbuf, sizeof(API_LCDTFT_PARA));
+    IPC_clientHandler(psDEV_PED, 13, 1, sizeof(API_LCDTFT_PARA), args, &retval);
+#endif
+}
+
+// ---------------------------------------------------------------------------
+// FUNC  : set COM port for external pin pad device.
+// INPUT : port
+// OUTPUT: 
+// RETURN: emvOK
+//         emvFailed (invalid port number)
+// NOTE  : This function should be called before api_emvk_CardholderVerification().
+// ---------------------------------------------------------------------------
+UCHAR	api_ped_SetPinPadPort( UCHAR port )
+{
+#if 0
+UCHAR	result = apiOK;
+
+
+	switch( port )	// 2016-10-11
+	      {
+	      case COM0:
+	      	
+	      	   g_dhn_ped = 0x88;
+	      	   break;
+	      	   
+	      case COM1:
+	      	
+	      	   g_dhn_ped = 0x89;
+	      	   break;
+	      	   
+	      case COM2:
+	      	
+	      	   g_dhn_ped = 0x8A;
+	      	   break;
+	      	   
+	      default:	// COM0
+	      	
+	      	   result = apiFailed;
+	      	   break;
+	      }
+	      
+	return( result );
+#else
+    UCHAR   retval;
+
+
+    IPC_clientHandler(psDEV_PED, 14, 1, 1, (UCHAR *)&port, &retval);
     return retval;
 #endif
 }

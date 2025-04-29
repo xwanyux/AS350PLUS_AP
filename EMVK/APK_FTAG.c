@@ -1157,14 +1157,14 @@ UCHAR apk_needTemplate(UINT Key)
 {
 	if(bsearch(&Key,Uneed,69,2,apk_BSearchComp)==0)
 		return FALSE;
-	return TRUE;//�䤣��
+	return TRUE;//找不到
 }
 
 // ---------------------------------------------------------------------------
 //remove inline Wayne
 UCHAR apk_BSearch(UINT Key,UINT Template)
 {
-	//bf0c��tag���ˬd
+	//bf0c的tag不檢查
 	if(bsearch(&Key,TEMPLATE_73ORBF0C,TEMPLATE73BF0CSIZE,2,apk_BSearchComp)!=0)
 		return TRUE;
 	switch(Template)
@@ -1220,8 +1220,8 @@ UCHAR apk_BSearch(UINT Key,UINT Template)
 //remove inline Wayne
 static UCHAR apk_isTemplate(UCHAR tag)
 {
-	//�ˬdtag��bit6�O�_��1�A�Y��1�h��constructed data object�A�Y�� template
-	//���Ftag 80�O�ҥ~
+	//檢查tag的bit6是否為1，若為1則為constructed data object，即為 template
+	//除了tag 80是例外
 	if(((tag&0x20)!=0)||(tag==0x80))
 			return (TRUE);
 	else

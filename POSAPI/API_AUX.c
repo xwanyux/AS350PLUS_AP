@@ -107,7 +107,8 @@ UCHAR sendbuff[3];
 	if(retval==apiReady)
 	{
 		memmove(dbuf,sendbuff+1,2);
-		AUX_RxreadyLength=(*dbuf)|((*dbuf+1)<<8);
+	//	AUX_RxreadyLength=(*dbuf)|((*dbuf+1)<<8);	// BUG
+		AUX_RxreadyLength = dbuf[0] + dbuf[1]*256;
 	}
 	
 	return( retval );
@@ -123,18 +124,29 @@ UCHAR sendbuff[3];
 // RETURN  : apiOK
 //           apiFailed
 // ---------------------------------------------------------------------------
+//UCHAR	api_temp[128];
 UCHAR	api_aux_rxstring( UCHAR dhn, UCHAR *dbuf )
 {
 UCHAR retval;
 UCHAR *sendbuff;
 
+
+	if( AUX_RxreadyLength == 0 )
+	  return( apiOK );
+
 	sendbuff=malloc(AUX_RxreadyLength+2+1);//length of message + (UINT 2B)length + (1B)dhn
+//	sendbuff = api_temp;
+
 	sendbuff[0]=dhn;
-	memmove(sendbuff+1,dbuf,AUX_RxreadyLength+2);
+//	memmove(sendbuff+1,dbuf,AUX_RxreadyLength+2);
 	IPC_clientHandler(psDEV_AUX,4,1,1,sendbuff,&retval);
+//	UTIL_DispHexWord( 2, 0, AUX_RxreadyLength );
+//	UTIL_DumpHexData( 0, 3, AUX_RxreadyLength+2, sendbuff+1 );
 	memmove(dbuf,sendbuff+1,AUX_RxreadyLength+2);
+	
 	free(sendbuff);
 	AUX_RxreadyLength=0;
+	
 	return( retval );
 }
 
@@ -256,7 +268,7 @@ BSP_UART *pUart;
 // RETURN  : apiOK
 //           apiFailed
 // ---------------------------------------------------------------------------
-UCHAR 	api_aux_SetLongLen( UINT dhn, UCHAR flag )
+UCHAR 	api_aux_SetLongLen( UCHAR dhn, UCHAR flag )
 {
 UCHAR retval;
 UCHAR sbuf[2];
@@ -278,7 +290,7 @@ UCHAR sbuf[2];
 // RETURN  : apiOK
 //           apiFailed
 // ---------------------------------------------------------------------------
-UCHAR 	api_aux_SetAckMode( UINT dhn, UCHAR mode )
+UCHAR 	api_aux_SetAckMode( UCHAR dhn, UCHAR mode )
 {
 UCHAR retval;
 UCHAR sbuf[2];

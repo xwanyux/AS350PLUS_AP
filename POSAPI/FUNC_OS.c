@@ -22,7 +22,7 @@
 #include <stdlib.h> /*for system function*/
 #include <string.h>
 
-#include "bsp_types.h"
+//#include "bsp_types.h"
 //#include "bsp_wdt.h"
 //#include "za9_pmu.h"
 
@@ -31,13 +31,13 @@
 #include "IPC_client.h"
 
 
-extern	volatile	UINT32	os_SysTimerFreeCnt;	// DEV_TIM.c
+//extern	volatile	UINT32	os_SysTimerFreeCnt;	// DEV_TIM.c
 
-extern	volatile	UINT32	os_ScEventFlag;		// BSP_SC.c	(to be implemented)
+//extern	volatile	UINT32	os_ScEventFlag;		// BSP_SC.c	(to be implemented)
 
-extern	volatile	UINT32	os_MsrEventFlag;	// BSP_MCR.c	(to be implemented)
+//extern	volatile	UINT32	os_MsrEventFlag;	// BSP_MCR.c	(to be implemented)
 
-extern	volatile	UINT32	os_KbdEventFlag;	// DEV_KBD.c
+//extern	volatile	UINT32	os_KbdEventFlag;	// DEV_KBD.c
 
 //extern	BSP_WDT		BspWdt;				// bsp_wdt.c
 //extern	BSP_SEM		WdtAvailable;			//
@@ -49,7 +49,6 @@ extern	volatile	UINT32	os_KbdEventFlag;	// DEV_KBD.c
 // OUTPUT  : none.
 // RETURN  : value.
 // ---------------------------------------------------------------------------
-#if	1
 ULONG	OS_GET_SysTimerFreeCnt( void )
 {
 UCHAR	retval;
@@ -63,7 +62,6 @@ ULONG	cnt;
 	cnt = sbuf[0] + sbuf[1]*0x100 + sbuf[2]*0x10000 + sbuf[3]*0x1000000;
 	return( cnt );
 }
-#endif
 
 // ---------------------------------------------------------------------------
 // FUNCTION: Set the value of system global variable "os_SysTimerFreeCnt".
@@ -71,13 +69,8 @@ ULONG	cnt;
 // OUTPUT  : none.
 // RETURN  : none.
 // ---------------------------------------------------------------------------
-#if	1
 void	OS_SET_SysTimerFreeCnt( ULONG value )
 {
-#if	0
-	os_SysTimerFreeCnt = value;
-#else
-
 UCHAR	retval;
 UCHAR	sbuf[16];
 
@@ -88,10 +81,7 @@ UCHAR	sbuf[16];
 	sbuf[2] = (value & 0x00ff0000) >> 16;
 	sbuf[3] = (value & 0xff000000) >> 24;
 	IPC_clientHandler( psDEV_OS, 2, 1, 4, sbuf, &retval );
-
-#endif
 }
-#endif
 
 // ---------------------------------------------------------------------------
 // FUNCTION: Get the value of system global variable "os_KbdEventFlag".
@@ -101,24 +91,16 @@ UCHAR	sbuf[16];
 // ---------------------------------------------------------------------------
 ULONG	OS_GET_KbdEventFlag( void )
 {
-	UCHAR dhn;
-	UCHAR sbuf[5];
-	UCHAR dbuf;
-    sbuf[0] = 0xff; // 7, 4, 1
-    sbuf[1] = 0xff; // 0, 8, 5, 2
-    sbuf[2] = 0xff; // 9, 6, 3
-    sbuf[3] = 0xff; // ENTER, CLEAR, CANCEL
-	dhn = api_kbd_open(0, sbuf);
+UCHAR	retval;
+UCHAR	sbuf[16];
+ULONG	cnt;
 
-	if(api_kbd_status(dhn, &dbuf) == apiReady)
-		return TRUE;
-	return FALSE;
 
-#ifdef	_KBD_ENABLED_
-	return( os_KbdEventFlag );
-#else
-	return( 0 );
-#endif
+	// void IPC_clientHandler(UINT8 PID, UINT8 APInum, UINT8 ArgsNum, UINT32 IptSize, UINT8 *Arg, UINT8 *retval)
+	IPC_clientHandler( psDEV_OS, 3, 0, 0, sbuf, &retval );
+	
+	cnt = sbuf[0] + sbuf[1]*0x100 + sbuf[2]*0x10000 + sbuf[3]*0x1000000;
+	return( cnt );
 }
 
 // ---------------------------------------------------------------------------
@@ -129,9 +111,16 @@ ULONG	OS_GET_KbdEventFlag( void )
 // ---------------------------------------------------------------------------
 void	OS_SET_KbdEventFlag( ULONG value )
 {
-#ifdef	_KBD_ENABLED_
-	os_KbdEventFlag = value;
-#endif
+UCHAR	retval;
+UCHAR	sbuf[16];
+
+
+	// void IPC_clientHandler(UINT8 PID, UINT8 APInum, UINT8 ArgsNum, UINT32 IptSize, UINT8 *Arg, UINT8 *retval)
+	sbuf[0] =  value & 0x000000ff;
+	sbuf[1] = (value & 0x0000ff00) >> 8;
+	sbuf[2] = (value & 0x00ff0000) >> 16;
+	sbuf[3] = (value & 0xff000000) >> 24;
+	IPC_clientHandler( psDEV_OS, 4, 1, 4, sbuf, &retval );
 }
 
 // ---------------------------------------------------------------------------
@@ -140,12 +129,19 @@ void	OS_SET_KbdEventFlag( ULONG value )
 // OUTPUT  : none.
 // RETURN  : value.
 // ---------------------------------------------------------------------------
-#if	0
 ULONG	OS_GET_ScEventFlag( void )
 {
-	return( os_ScEventFlag );
+UCHAR	retval;
+UCHAR	sbuf[16];
+ULONG	cnt;
+
+
+	// void IPC_clientHandler(UINT8 PID, UINT8 APInum, UINT8 ArgsNum, UINT32 IptSize, UINT8 *Arg, UINT8 *retval)
+	IPC_clientHandler( psDEV_OS, 5, 0, 0, sbuf, &retval );
+	
+	cnt = sbuf[0] + sbuf[1]*0x100 + sbuf[2]*0x10000 + sbuf[3]*0x1000000;
+	return( cnt );
 }
-#endif
 
 // ---------------------------------------------------------------------------
 // FUNCTION: Set the value of system global variable "os_ScEventFlag".
@@ -153,12 +149,19 @@ ULONG	OS_GET_ScEventFlag( void )
 // OUTPUT  : none.
 // RETURN  : none.
 // ---------------------------------------------------------------------------
-#if	0
 void	OS_SET_ScEventFlag( ULONG value )
 {
-	os_ScEventFlag = value;
+UCHAR	retval;
+UCHAR	sbuf[16];
+
+
+	// void IPC_clientHandler(UINT8 PID, UINT8 APInum, UINT8 ArgsNum, UINT32 IptSize, UINT8 *Arg, UINT8 *retval)
+	sbuf[0] =  value & 0x000000ff;
+	sbuf[1] = (value & 0x0000ff00) >> 8;
+	sbuf[2] = (value & 0x00ff0000) >> 16;
+	sbuf[3] = (value & 0xff000000) >> 24;
+	IPC_clientHandler( psDEV_OS, 6, 1, 4, sbuf, &retval );
 }
-#endif
 
 // ---------------------------------------------------------------------------
 // FUNCTION: Get the value of system global variable "os_MsrEventFlag".
@@ -166,12 +169,19 @@ void	OS_SET_ScEventFlag( ULONG value )
 // OUTPUT  : none.
 // RETURN  : value.
 // ---------------------------------------------------------------------------
-#if	0
 ULONG	OS_GET_MsrEventFlag( void )
 {
-	return( os_MsrEventFlag );
+UCHAR	retval;
+UCHAR	sbuf[16];
+ULONG	cnt;
+
+
+	// void IPC_clientHandler(UINT8 PID, UINT8 APInum, UINT8 ArgsNum, UINT32 IptSize, UINT8 *Arg, UINT8 *retval)
+	IPC_clientHandler( psDEV_OS, 7, 0, 0, sbuf, &retval );
+	
+	cnt = sbuf[0] + sbuf[1]*0x100 + sbuf[2]*0x10000 + sbuf[3]*0x1000000;
+	return( cnt );
 }
-#endif
 
 // ---------------------------------------------------------------------------
 // FUNCTION: Set the value of system global variable "os_MsrEventFlag".
@@ -179,12 +189,19 @@ ULONG	OS_GET_MsrEventFlag( void )
 // OUTPUT  : none.
 // RETURN  : none.
 // ---------------------------------------------------------------------------
-#if	0
 void	OS_SET_MsrEventFlag( ULONG value )
 {
-	os_MsrEventFlag = value;
+UCHAR	retval;
+UCHAR	sbuf[16];
+
+
+	// void IPC_clientHandler(UINT8 PID, UINT8 APInum, UINT8 ArgsNum, UINT32 IptSize, UINT8 *Arg, UINT8 *retval)
+	sbuf[0] =  value & 0x000000ff;
+	sbuf[1] = (value & 0x0000ff00) >> 8;
+	sbuf[2] = (value & 0x00ff0000) >> 16;
+	sbuf[3] = (value & 0xff000000) >> 24;
+	IPC_clientHandler( psDEV_OS, 8, 1, 4, sbuf, &retval );
 }
-#endif
 
 // ---------------------------------------------------------------------------
 // FUNCTION: Write data to the specified address.

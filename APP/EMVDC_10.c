@@ -83,7 +83,8 @@ UCHAR	data;
 	  
 	  // --- Generate Encrypted PIN Block ---
 	  
-	  if( PP_GenEncrypedPinBlock( buf, epb, ksn, g_iso_format, g_key_index ) == apiOK )
+	  if( PP_GenEncrypedPinBlock( buf, epb, ksn ) == apiOK )
+    //   if( PP_GenEncrypedPinBlock( buf, epb, ksn, g_iso_format, g_key_index ) == apiOK )
 	    {
 	    iLen = epb[0]+epb[1]*256;
 	    if( iLen != 0 )

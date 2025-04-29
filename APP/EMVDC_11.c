@@ -292,17 +292,17 @@ UCHAR	*EMVDC_contactless( UCHAR *amt, UCHAR *result, UINT *opLen )
 		//		9F 39 01 07 
 		//		DF 0E 01 05
 		//
-		// §PÂ_Offline approveªº¤è¦¡¡G
-		// D4¥]§tTLV DF 1F 01 00
+		// ï¿½Pï¿½_Offline approveï¿½ï¿½ï¿½è¦¡ï¿½G
+		// D4ï¿½]ï¿½tTLV DF 1F 01 00
 		//
-		// §PÂ_Online approveªº¤è¦¡¡G
-		// D4¥]§tTLV DF 0F 01 01
+		// ï¿½Pï¿½_Online approveï¿½ï¿½ï¿½è¦¡ï¿½G
+		// D4ï¿½]ï¿½tTLV DF 0F 01 01
 		//
-		// §PÂ_Online PINªº¤è¦¡¡G
-		// D4¥]§tTLV 99 01 00
+		// ï¿½Pï¿½_Online PINï¿½ï¿½ï¿½è¦¡ï¿½G
+		// D4ï¿½]ï¿½tTLV 99 01 00
 		//
-		// §PÂ_Obtain signatureªº¤è¦¡¡G
-		// D4¥]§tTLV 55 01 00
+		// ï¿½Pï¿½_Obtain signatureï¿½ï¿½ï¿½è¦¡ï¿½G
+		// D4ï¿½]ï¿½tTLV 55 01 00
 
 		
 		iLen = bufRecv[0]*256 + bufRecv[1];
@@ -609,7 +609,8 @@ UCHAR	data;
 	  
 	  // --- Generate Encrypted PIN Block ---
 	  
-	  if( PP_GenEncrypedPinBlock( buf, epb, ksn, g_iso_format, g_key_index ) == apiOK )
+	  if( PP_GenEncrypedPinBlock( buf, epb, ksn ) == apiOK )
+    //   if( PP_GenEncrypedPinBlock( buf, epb, ksn, g_iso_format, g_key_index ) == apiOK )
 	    {
 	    iLen = epb[0]+epb[1]*256;
 	    if( iLen != 0 )

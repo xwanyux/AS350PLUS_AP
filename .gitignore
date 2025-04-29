@@ -4,3 +4,5 @@ SIGN/
 .vscode/
 DIGEST_sig.bin
 IPC_client
+POSAPI_LIB.bat
+EMVK_LIB.bat

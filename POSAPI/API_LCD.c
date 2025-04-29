@@ -341,3 +341,8 @@ UCHAR api_lcd_initfont( API_LCD_FONT ft  )
 {
 api_lcdtft_initfont( ft  );
 }
+
+void	api_lcd_convertfont( UCHAR flag )
+{
+	
+}

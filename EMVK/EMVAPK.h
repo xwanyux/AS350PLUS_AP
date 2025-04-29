@@ -55,6 +55,7 @@ extern  UCHAR apk_ReadRecord( UCHAR sfi, UCHAR recnum, UCHAR *recdata );
 
 //      APK_MAPP
 extern  UCHAR apk_MatchingAPP( UCHAR *aid );
+extern	UCHAR apk_SetASI( UCHAR *aid, UCHAR flag );
 extern  UCHAR apk_GetTermAID( UCHAR index, UCHAR *aid );
 extern  void  apk_EmptyCandidateList( void );
 extern  UCHAR apk_AddCandidateList( UCHAR *ptrdata );
@@ -91,6 +92,7 @@ extern  UCHAR apk_GetChallengeICC( UCHAR *random );
 extern  UCHAR apk_InternalAuthen( UCHAR *ddol, UCHAR *sdad );
 extern  UCHAR apk_SelectSAM( void );
 extern  UCHAR apk_CleanSAM( void );
+extern	void  apk_ReleaseRSA( void );
 
 //      APK_PRES
 extern  UCHAR apk_ProcessRestrict_AVN( void );
@@ -100,7 +102,8 @@ extern	UCHAR apk_ProcessRestrict_AED( void );
 //      APK_CVML
 extern  UCHAR apk_CVM_PlaintextPIN( UINT tout, UCHAR *msg );
 extern  UCHAR apk_CVM_EncipheredPIN( UINT tout, UCHAR *msg );
-extern  UCHAR apk_CVM_OnlineEncipheredPIN( UINT tout, UCHAR *msg, UCHAR *epb, UCHAR *ksn, UCHAR mod, UCHAR idx );
+extern  UCHAR apk_CVM_OnlineEncipheredPIN( UINT tout, UCHAR *msg, UCHAR *epb, UCHAR *ksn );
+//extern  UCHAR apk_CVM_OnlineEncipheredPIN( UINT tout, UCHAR *msg, UCHAR *epb, UCHAR *ksn, UCHAR mod, UCHAR idx );
 
 //      APK_TRMS
 extern  UCHAR apk_RandomNumber( void );

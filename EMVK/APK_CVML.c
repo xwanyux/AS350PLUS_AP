@@ -620,6 +620,9 @@ printf("@@@@@@@@@@@@%s %d\n",__func__,__LINE__);
       if( buf[5] == 0 )
         return( apkFailed ); // PIN Try Limit exceeded
 
+      if( buf[5] == 1 )
+        PP_show_last_pin_try();
+
 GET_PIN:
       // show "message" from IFD to inform cardholder
       // to confirm it befor entering PIN.
@@ -675,6 +678,7 @@ printf("@@@@@@@@@@@@%s %d\n",__func__,__LINE__);
 // ---------------------------------------------------------------------------
 UCHAR apk_CVM_PlaintextPIN( UINT tout, UCHAR *msg )
 {
+      g_emv_ped_type = 0;	// 2011-03-27, for CUP offline PIN
       return( CVM_OfflinePIN( tout, msg, 0 ) );
 }
 
@@ -697,6 +701,7 @@ UCHAR apk_CVM_EncipheredPIN( UINT tout, UCHAR *msg )
       // 4. Get CHALLENGE
       // 5. VERIFY
 
+      g_emv_ped_type = 0;	// 2011-03-27, for CUP offline PIN
       return( CVM_OfflinePIN( tout, msg, 1 ) );
 }
 
@@ -716,7 +721,8 @@ UCHAR apk_CVM_EncipheredPIN( UINT tout, UCHAR *msg )
 // REF     : ksn       - format2: V(12)
 //                       fix 12-byte with leading hex "F's".
 // ---------------------------------------------------------------------------
-UCHAR apk_CVM_OnlineEncipheredPIN( UINT tout, UCHAR *msg, UCHAR *epb, UCHAR *ksn, UCHAR mod, UCHAR idx )
+UCHAR apk_CVM_OnlineEncipheredPIN( UINT tout, UCHAR *msg, UCHAR *epb, UCHAR *ksn )
+//UCHAR apk_CVM_OnlineEncipheredPIN( UINT tout, UCHAR *msg, UCHAR *epb, UCHAR *ksn, UCHAR mod, UCHAR idx )
 {
 //UCHAR temp[16];
 UCHAR bpan[12];
@@ -748,7 +754,8 @@ UINT  iLen;
       apk_ReadRamDataICC( ADDR_ICC_AP_PAN, sizeof(bpan), bpan );  // bpan: LL-V(CN)
       TL_bcd2asc( bpan[0], &bpan[2], pan );	// pan: L-V(AN)
       
-      result = PP_GenEncrypedPinBlock( pan, epb, ksn, mod, idx );
+      result = PP_GenEncrypedPinBlock( pan, epb, ksn );
+      //result = PP_GenEncrypedPinBlock( pan, epb, ksn, mod, idx );
       memset( pan, 0x00, sizeof(pan) );		// 2018-08-09, clear PAN working buffer after use
       memset( bpan, 0x00, sizeof(bpan) );	//
       if( result == apiOK )

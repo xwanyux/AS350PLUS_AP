@@ -52,7 +52,8 @@
 //                       (3) CVM not successful.
 //           emvOutOfService - terminate current transaction.
 // ---------------------------------------------------------------------------
-UCHAR api_emv_CardholderVerification( UINT tout, UCHAR *msg, UCHAR *epb, UCHAR *ksn, UCHAR mod, UCHAR idx )
+UCHAR api_emv_CardholderVerification( UINT tout, UCHAR *msg, UCHAR *epb, UCHAR *ksn )
+//UCHAR api_emv_CardholderVerification( UINT tout, UCHAR *msg, UCHAR *epb, UCHAR *ksn, UCHAR mod, UCHAR idx )
 {
 UCHAR i;
 UCHAR aip[2];
@@ -349,7 +350,8 @@ UCHAR fCVMnosup = FALSE; //20090317_Richard: EMV 4.1e, 2CJ.083.04
           	    fCVM = TRUE;
 
                     // PATCH: 2005/05/11
-                    result = apk_CVM_OnlineEncipheredPIN( tout, msg, epb, ksn, mod, idx );
+                    result = apk_CVM_OnlineEncipheredPIN( tout, msg, epb, ksn );
+                    //result = apk_CVM_OnlineEncipheredPIN( tout, msg, epb, ksn, mod, idx );
                     if( result == apkOK )
                       {
                       g_term_TVR[2] |= TVR2_ONLINE_PIN_ENTERED; // PATCH: 2005/05/19, 2CM.020.00
@@ -374,21 +376,42 @@ UCHAR fCVMnosup = FALSE; //20090317_Richard: EMV 4.1e, 2CJ.083.04
                     result = apkOK;
                     break;
 
-#ifdef  L2_PBOC20
+// #ifdef  L2_PBOC20
 
+//                case CVR_VERIFY_CH_LICENSE:  // PATCH: PBOC2.0 ONLY, 2006-02-14
+
+//                     if( (tcap[1] & CAP1_CH_LICENSE_VERIFY) == 0 )
+//                       continue;
+
+//                     result = PBOC_VerifyCardholderLicense();
+//                     if( result == TRUE )
+//                       result = apkOK;
+//                     else
+//                       result = apkIncorrect;
+//                     break;
+
+// #endif
                case CVR_VERIFY_CH_LICENSE:  // PATCH: PBOC2.0 ONLY, 2006-02-14
 
-                    if( (tcap[1] & CAP1_CH_LICENSE_VERIFY) == 0 )
-                      continue;
+		    if( g_kernel == KERNEL_PBOC )
+		      {
+                      if( (tcap[1] & CAP1_CH_LICENSE_VERIFY) == 0 )
+                        {
+                        fCVMnosup = TRUE; //20090317_Richard: EMV 4.1e, 2CJ.083.04
+              	        goto ACTION_FAILED;
+                        }
+                        
+                      g_term_CVMR[0] = mcode;
+                      g_term_CVMR[1] = ccode;
+                      fCVM = TRUE;
 
-                    result = PBOC_VerifyCardholderLicense();
-                    if( result == TRUE )
-                      result = apkOK;
-                    else
-                      result = apkIncorrect;
-                    break;
-
-#endif
+                      result = PBOC_VerifyCardholderLicense();
+                      if( result == TRUE )
+                        result = apkOK;
+                      else
+                        result = apkIncorrect;
+                      break;
+                      }
 
                default: // others, not supported
 

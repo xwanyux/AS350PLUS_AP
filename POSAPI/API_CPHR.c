@@ -285,7 +285,7 @@ ULONG	api_rsa_encrypt( API_RSA cipher )
 ULONG modlen=cipher.ModLen;
 ULONG pInlen=cipher.Length;
 ULONG explen=cipher.ExpLen;
-ULONG pOutlen=(pInlen/modlen)>0?(pInlen-pInlen%modlen+modlen):modlen;
+ULONG pOutlen=cipher.ModLen;
 ULONG sendlen=sizeof(API_RSA)+modlen+explen+pInlen;
 UCHAR retval;
 UCHAR sbuf[sendlen+pOutlen];
